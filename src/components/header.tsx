@@ -10,9 +10,9 @@ const Header: FunctionComponent = () =>
                 <Link href="/"><a className={styles['header__logo-link']}>Аркада-Вет</a></Link>
             </div>
             <nav className={styles.header__nav}>
-                <Link href="/"><a className={styles['header__nav-link']} href="/">Каталог</a></Link>
-                <Link href="/"><a className={styles['header__nav-link']} href="/about">О&nbsp;нас</a></Link>
-                <Link href="/"><a className={styles['header__nav-link']} href="/contacts">Контакты</a></Link>
+                <Link href="/"><a className={styles['header__nav-link']}>Каталог</a></Link>
+                <Link href="/about"><a className={styles['header__nav-link']}>О&nbsp;нас</a></Link>
+                <Link href="/contacts"><a className={styles['header__nav-link']}>Контакты</a></Link>
             </nav>
         </div>
     </header>
