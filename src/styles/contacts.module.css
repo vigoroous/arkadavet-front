@@ -1,0 +1,81 @@
+.content_contacts {
+    padding: 50px 50px 100px 50px;
+}
+
+.contacts__wrap {
+    display: flex;
+}
+
+.contacts__title {
+    font-family: 'Raleway';
+    font-weight: 600;
+    font-size: 40px;
+    color: #405357;
+}
+
+.contacts__article {
+    width: 43%;
+    margin-right: 40px;
+}
+
+.contacts__phone, .contacts__email {
+    font-family: 'Roboto';
+    font-weight: 400;
+    font-size: 20px;
+    color: #0F0F0F;
+}
+
+.contacts__text {
+    font-family: 'Roboto';
+    font-weight: 300;
+    font-size: 20px;
+    color: #0F0F0F;
+    margin: 0;
+}
+
+.form_contacts {
+    width: 50%;
+    margin-right: 7%;
+}
+
+@media (max-width: 980px) {
+    .contacts__wrap {
+        flex-direction: column;
+    }
+    .contacts__title {
+        margin-top: 0;
+    }
+    .contacts__article {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 50px;
+    }
+    .form_contacts {
+        width: 100%;
+        margin-right: 0;
+    }
+    .form_contacts .form__button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 640px) {
+    .content_contacts {
+        padding: 50px;
+    }
+    .contacts__title {
+        font-size: 32px;
+    }
+    .contacts__text {
+        font-size: 16px;
+    }
+    .contacts__phone, .contacts__email {
+        font-size: 16px;
+    }
+    .form_contacts .form__input, .form_contacts .form__textarea {
+        font-size: 16px;
+    }
+    .form_contacts .form__button {
+        font-size: 16px;
+    }
+}

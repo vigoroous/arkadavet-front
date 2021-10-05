@@ -1,0 +1,21 @@
+.footer {
+    background: #668F96;
+    padding: 60px 0px;
+}
+
+.footer__copyright {
+    font-size: 16px;
+    font-family: 'Raleway';
+    color: #FFFFFF;
+    text-align: center;
+    
+}
+
+@media (max-width: 640px) {
+    .footer {
+        padding: 30px 0px;
+    }
+    .footer__copyright {
+        font-size: 14px;
+    }
+}

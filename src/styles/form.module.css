@@ -1,0 +1,43 @@
+/*********** FORM ***********/
+
+.form__input, .form__textarea {
+    box-sizing: border-box;
+    border-radius: 0;
+    padding: 10px 20px;
+    font-family: 'Roboto';
+    font-size: 20px;
+    font-weight: 300;
+    background-color: #edeff0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: 1px solid rgba(68, 95, 100, 1);
+    color: #445F64;
+    margin: 0 0 7px;
+    width: 100%;
+    outline: 0;
+}
+
+.form__textarea {
+    resize: none;
+}
+
+.form__button {
+    background-color: #405357;
+    color: #fff;
+    border: 0;
+    padding: 10px 20px;
+    font-family: 'Roboto';
+    font-size: 20px;
+    font-weight: 300;
+    width: 40%;
+    min-width: 200px;
+    cursor: pointer;
+}
+
+.form__button:hover {
+    background-color: rgba(128, 166, 173, 1);
+}
+
+.form__button:active {
+    margin-top: 2px;
+}
