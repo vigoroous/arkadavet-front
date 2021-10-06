@@ -1,5 +1,4 @@
 import '@styles/globals.css'
-import '@styles/common.css'
 
 import type { ReactElement, ReactNode } from 'react'
 import type { NextPage } from 'next'

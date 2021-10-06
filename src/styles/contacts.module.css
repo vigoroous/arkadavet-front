@@ -2,30 +2,30 @@
     padding: 50px 50px 100px 50px;
 }
 
-.contacts__wrap {
+.wrap {
     display: flex;
 }
 
-.contacts__title {
+.title {
     font-family: 'Raleway';
     font-weight: 600;
     font-size: 40px;
     color: #405357;
 }
 
-.contacts__article {
+.article {
     width: 43%;
     margin-right: 40px;
 }
 
-.contacts__phone, .contacts__email {
+.phone, .email {
     font-family: 'Roboto';
     font-weight: 400;
     font-size: 20px;
     color: #0F0F0F;
 }
 
-.contacts__text {
+.text {
     font-family: 'Roboto';
     font-weight: 300;
     font-size: 20px;
@@ -33,28 +33,74 @@
     margin: 0;
 }
 
-.form_contacts {
+.form {
     width: 50%;
     margin-right: 7%;
 }
 
+/*********** FORM ***********/
+
+.form__input, .form__textarea {
+    box-sizing: border-box;
+    border-radius: 0;
+    padding: 10px 20px;
+    font-family: 'Roboto';
+    font-size: 20px;
+    font-weight: 300;
+    background-color: #edeff0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: 1px solid rgba(68, 95, 100, 1);
+    color: #445F64;
+    margin: 0 0 7px;
+    width: 100%;
+    outline: 0;
+}
+
+.form__textarea {
+    resize: none;
+}
+
+.form__button {
+    background-color: #405357;
+    color: #fff;
+    border: 0;
+    padding: 10px 20px;
+    font-family: 'Roboto';
+    font-size: 20px;
+    font-weight: 300;
+    width: 40%;
+    min-width: 200px;
+    cursor: pointer;
+}
+
+.form__button:hover {
+    background-color: rgba(128, 166, 173, 1);
+}
+
+.form__button:active {
+    margin-top: 2px;
+}
+
+/*********** Resolution ***********/
+
 @media (max-width: 980px) {
-    .contacts__wrap {
+    .wrap {
         flex-direction: column;
     }
-    .contacts__title {
+    .title {
         margin-top: 0;
     }
-    .contacts__article {
+    .article {
         width: 100%;
         margin-right: 0;
         margin-bottom: 50px;
     }
-    .form_contacts {
+    .form {
         width: 100%;
         margin-right: 0;
     }
-    .form_contacts .form__button {
+    .form__button {
         width: 100%;
     }
 }
@@ -63,19 +109,19 @@
     .content_contacts {
         padding: 50px;
     }
-    .contacts__title {
+    .title {
         font-size: 32px;
     }
-    .contacts__text {
+    .text {
         font-size: 16px;
     }
-    .contacts__phone, .contacts__email {
+    .phone, .email {
         font-size: 16px;
     }
-    .form_contacts .form__input, .form_contacts .form__textarea {
+    .form__input, .form__textarea {
         font-size: 16px;
     }
-    .form_contacts .form__button {
+    .form__button {
         font-size: 16px;
     }
 }

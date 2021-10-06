@@ -5,7 +5,6 @@ import Layout from '@components/layout'
 import styles from "@styles/about.module.css"
 
 const About: NextPageWithLayout = (props) => {
-    const test = 'Hello World'
     return (
         <main className={"content " + styles['content_about']}>
             <div className={styles.cover}></div>
