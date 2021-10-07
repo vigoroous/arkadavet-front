@@ -169,19 +169,16 @@
     padding-top: 5px;
     text-align: center;
     color: #0F0F0F;
+    width: 80%;
+    margin: 0 auto;
 }
 
 .products__item-image {
     margin: 10px;
     height: 168px;
-    background-image: url('/img/products/bottle2-edit.png');
     background-position: center;
     background-repeat: no-repeat;
     background-size: contain;
-}
-
-.products__item:nth-child(2)>.products__item-image {
-    background-image: url('/img/products/pack2-edit.png');
 }
 
 /********* RESOLUTION *********/

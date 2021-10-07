@@ -1,3 +1,49 @@
+/*********** FORM ***********/
+
+.form__input, .form__textarea {
+    box-sizing: border-box;
+    border-radius: 0;
+    padding: 10px 20px;
+    font-family: 'Roboto';
+    font-size: 20px;
+    font-weight: 300;
+    background-color: #edeff0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: 1px solid rgba(68, 95, 100, 1);
+    color: #445F64;
+    margin: 0 0 7px;
+    width: 100%;
+    outline: 0;
+}
+
+.form__textarea {
+    resize: none;
+}
+
+.form__button {
+    background-color: #405357;
+    color: #fff;
+    border: 0;
+    padding: 10px 20px;
+    font-family: 'Roboto';
+    font-size: 20px;
+    font-weight: 300;
+    width: 40%;
+    min-width: 200px;
+    cursor: pointer;
+}
+
+.form__button:hover {
+    background-color: rgba(128, 166, 173, 1);
+}
+
+.form__button:active {
+    margin-top: 2px;
+}
+
+/*********** breadcrumbs ***********/
+
 .breadcrumbs {
     display: flex;
     padding: 50px;
@@ -8,6 +54,8 @@
     font-size: 16px;
 }
 
+/*********** order ***********/
+
 .order {
     display: flex;
     justify-content: space-evenly;
@@ -16,7 +64,6 @@
 }
 
 .order__product-image {
-    background-image: url('/img/products/bottle2-edit.png');
     background-position: center;
     background-repeat: no-repeat;
     background-size: contain;
@@ -24,20 +71,20 @@
     margin-right: 50px;
 }
 
-.form_order {
+.form {
     width: 50%;
     min-width: 300px;
 }
 
-.form_order .form__input {
+.form__input {
     margin-bottom: 10px;
 }
 
-.form_order .form__button {
+.form__button {
     width: 100%;
 }
 
-.form_order .form__button:active {
+.form__button:active {
     margin-top: 0;
 }
 
@@ -126,11 +173,11 @@
         margin-bottom: 20px;
         margin-right: 0;
     }
-    .form_order {
+    .form {
         min-width: initial;
         width: 100%;
     }
-    .form_order .form__input {
+    .form__input {
         font-size: 16px;
     }
     .product-details {
