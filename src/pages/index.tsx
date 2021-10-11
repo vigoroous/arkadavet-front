@@ -1,58 +1,31 @@
 import React, { FC, useEffect, useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { NextPageWithLayout } from './_app'
 import Layout from '@components/layout'
 import styles from '@styles/home.module.css'
-// import { FilterProvider } from 'hooks/filterprovider'
-import useFilters, { ActionFilters } from 'hooks/useFilters'
+import useFilters, { FilterActions } from 'hooks/useFilters'
+import { GetStaticProps } from 'next'
+import { ProductType } from './product/[pid]'
 
-export type ProductType = {
-    id: string,
-    name: string,
-    category: string,
-    imageUrl: string,
-    rating: number,
-    details: string
-}
 
+// ProductElem
 const ProductElem: FC<ProductType> = ({ id, name, category, imageUrl }) =>
     <Link href={`/product/${id}`} passHref>
         <a className={styles['products__item']}>
             <div className={styles['products__item-name']}>{name}</div>
-            <div className={styles['products__item-category']}>{category}</div>
+            <div className={styles['products__item-category']}>{category.name}</div>
             <div className={styles['products__item-image']} style={{ backgroundImage: `url(${imageUrl})` }}></div>
-            {/* <Image alt=""  src={imageUrl} layout='fill'/> */}
         </a>
     </Link >
 
+
+// Products
 type ProductsProps = {
+    data: ProductType[],
     filters: string[]
 }
 
-const Products: FC<ProductsProps> = ({ filters }) => {
-    const [data, setData] = useState<ProductType[] | null>(null)
-    //const [page, setPage] = useState(0)
-
-    useEffect(() => {
-        // fetch("http://127.0.0.1:8000/api/products/?sortby=${filters.sorting}", {
-        // fetch(`http://127.0.0.1:8000/api/products/?filters=${filters.join}`, {
-        fetch("http://127.0.0.1:8000/api/products/", {
-            method: 'GET',
-            // body: JSON.stringify({ page, filters })
-        })
-            .then(res => {
-                if (res.ok)
-                    return res.json()
-                else
-                    throw new Error("failed to get...")
-            })
-            .then((data: ProductType[]) => setData(data))
-            .catch(e => console.log(e))
-    }, [])
-    // }, [page, filters])
-
-    if (!data) return <div>Loading...</div>
+const Products: FC<ProductsProps> = ({ filters, data }) => {
     return (
         <div className={styles['products']}>
             {data.map(e =>
@@ -61,11 +34,13 @@ const Products: FC<ProductsProps> = ({ filters }) => {
     )
 }
 
+
+// Controls
 type ControlProps = {
-    actions: ActionFilters
+    dispatch: FilterActions
 }
 
-const Controls: FC<ControlProps> = ({ actions }) => {
+const Controls: FC<ControlProps> = ({ dispatch }) => {
 
     return (
         <div className={styles['control']}>
@@ -89,8 +64,10 @@ const Controls: FC<ControlProps> = ({ actions }) => {
     )
 }
 
-const Home: NextPageWithLayout = (props) => {
-    const { filters, actions } = useFilters()
+
+// Home
+const Home: NextPageWithLayout<{ data: ProductType[] }> = ({ data }) => {
+    const [state, dispatch] = useFilters()
 
     return (
 
@@ -107,16 +84,14 @@ const Home: NextPageWithLayout = (props) => {
                 </div>
                 <div className={styles['lightbox__image']}></div>
             </div>
-            <Controls actions={actions} />
-            <Products filters={filters} />
+            <Controls dispatch={dispatch} />
+            <Products filters={state.filters} data={data} />
         </main>
 
     )
 }
 
-
 export default Home
-
 
 Home.getLayout = function getLayout(page) {
     return (
@@ -124,4 +99,22 @@ Home.getLayout = function getLayout(page) {
             {page}
         </Layout>
     )
+}
+
+export const getStaticProps: GetStaticProps = async () => {
+    try {
+        const res = await fetch("http://127.0.0.1:8000/api/product/")
+        const data: ProductType = await res.json();
+
+        return {
+            props: {
+                data,
+            },
+            revalidate: 10,
+        }
+    } catch (error) {
+        return {
+            notFound: true,
+        }
+    }
 }
