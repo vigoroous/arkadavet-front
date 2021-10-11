@@ -1,21 +1,37 @@
-// import { useContext } from "react"
-// import {FilterContext} from "./filterprovider"
-import { useState } from "react"
+import { useReducer } from "react"
 
-// const useFilters = () => useContext(FilterContext)
 
-export type ActionFilters = {
-    addFilter: (filter: string) => void, 
-    removeFilter: (filter: string) => void, 
-    clearFilters: () => void
+type FilterState = {
+    filters: string[]
 }
 
-const useFilters = () => {
-    const [filters, setFilters] = useState<string[]>([])
-    const addFilter = (filter: string) => setFilters(filters.concat(filter))
-    const removeFilter = (filter: string) => setFilters(filters.filter(elem => elem !== filter))
-    const clearFilters = () => setFilters([])
-    return { filters, actions: { addFilter, removeFilter, clearFilters } }
+const initialState: FilterState = {
+    filters: []
 }
+
+export type FilterAction =
+    | { type: 'CLEAR_FILTERS' }
+    | { type: 'TOGGLE_FILTER', filter: string }
+
+type FilterReducerType = (state: FilterState, action: FilterAction) => FilterState
+
+const filterReducer: FilterReducerType = (state, action) => {
+    switch (action.type) {
+        case 'CLEAR_FILTERS': return { ...state, filters: [] }
+        case 'TOGGLE_FILTER': {
+            const { filter } = action
+            return {
+                ...state,
+                filters: state.filters.includes(filter) ?
+                    state.filters.filter(e => e !== filter) :
+                    state.filters.concat(filter)
+            }
+        }
+    }
+}
+
+const useFilters = () => useReducer(filterReducer, initialState)
+
+export type FilterActions = ReturnType<typeof useFilters>[1]
 
 export default useFilters
