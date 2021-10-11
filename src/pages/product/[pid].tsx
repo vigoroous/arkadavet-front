@@ -1,10 +1,15 @@
 import React, { FC, Fragment, useEffect, useState } from 'react'
 import { NextPageWithLayout } from 'pages/_app'
-import { ProductType } from 'pages'
 import Layout from '@components/layout'
 import styles from '@styles/product.module.css'
 import { useRouter } from 'next/dist/client/router'
 
+
+// Product
+type ProductCategoryType = {
+    id: string,
+    name: string
+}
 
 type ProductDetailsType = {
     id: string,
@@ -15,6 +20,15 @@ type ProductDetailsType = {
     elimination: string
 }
 
+export type ProductType = {
+    id: string,
+    name: string,
+    category: ProductCategoryType,
+    imageUrl: string,
+    rating: number,
+    details: ProductDetailsType
+}
+
 const Product: FC = () => {
     const router = useRouter()
     const { pid } = router.query
@@ -23,7 +37,7 @@ const Product: FC = () => {
 
     useEffect(() => {
         if (!pid) return
-        fetch(`http://127.0.0.1:8000/api/products/${pid}/`, {
+        fetch(`http://127.0.0.1:8000/api/productfull/${pid}/`, {
             method: 'GET',
         })
             .then(res => {
@@ -44,7 +58,7 @@ const Product: FC = () => {
                 <p className={styles['breadcrumbs__text']}>
                     Каталог
                     &nbsp;&frasl;&nbsp;
-                    {data.category}
+                    {data.category.name}
                     &nbsp;&frasl;&nbsp;
                     {data.name}
                 </p>
@@ -59,70 +73,48 @@ const Product: FC = () => {
                     <button type="submit" className={styles['form__button']}>Заказать</button>
                 </form>
             </div>
-            <ProductDetails id={data.details}/>
+            <div className={styles['product-details']}>
+                <div className={styles['product-details__l-container']}>
+                    <div className={styles['product-details__item']}>
+                        <h2 className={styles['product-details__title']}>Описание</h2>
+                        <div className={styles['product-details__text']}>
+                            {data.details.description}
+                        </div>
+                    </div>
+                    <div className={styles['product-details__item']}>
+                        <h2 className={styles['product-details__title']}>Состав</h2>
+                        <div className={styles['product-details__text']}>
+                            {data.details.composition}
+                        </div>
+                    </div>
+                    <div className={styles['product-details__item']}>
+                        <h2 className={styles['product-details__title']}>Применение</h2>
+                        <div className={styles['product-details__text']}>
+                            {data.details.usage}
+                        </div>
+                    </div>
+                </div>
+                <div className={styles['product-details__r-container']}>
+                    <div className={styles['product-details__item']}>
+                        <h2 className={styles['product-details__title']}>Противопоказания</h2>
+                        <div className={styles['product-details__text']}>
+                            {data.details.contraindication}
+                        </div>
+                    </div>
+                    <div className={styles['product-details__item']}>
+                        <h2 className={styles['product-details__title']}>Сроки выведения</h2>
+                        <div className={styles['product-details__text']}>
+                            {data.details.elimination}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </Fragment>
     )
 }
 
-const ProductDetails: FC<{ id: string }> = ({ id }) => {
-    const [data, setData] = useState<ProductDetailsType | null>(null)
 
-    useEffect(() => {
-        if (!id) return
-        fetch(`http://127.0.0.1:8000/api/productdetails/${id}/`, {
-            method: 'GET',
-        })
-            .then(res => {
-                if (res.ok)
-                    return res.json()
-                else
-                    throw new Error("failed to get...")
-            })
-            .then((data: ProductDetailsType) => setData(data))
-            .catch(e => console.log(e))
-    }, [id])
-
-    if (!data) return <div>Loading...</div>
-    return (
-        <div className={styles['product-details']}>
-            <div className={styles['product-details__l-container']}>
-                <div className={styles['product-details__item']}>
-                    <h2 className={styles['product-details__title']}>Описание</h2>
-                    <div className={styles['product-details__text']}>
-                        {data.description}
-                    </div>
-                </div>
-                <div className={styles['product-details__item']}>
-                    <h2 className={styles['product-details__title']}>Состав</h2>
-                    <div className={styles['product-details__text']}>
-                        {data.composition}
-                    </div>
-                </div>
-                <div className={styles['product-details__item']}>
-                    <h2 className={styles['product-details__title']}>Применение</h2>
-                    <div className={styles['product-details__text']}>
-                        {data.usage}
-                    </div>
-                </div>
-            </div>
-            <div className={styles['product-details__r-container']}>
-                <div className={styles['product-details__item']}>
-                    <h2 className={styles['product-details__title']}>Противопоказания</h2>
-                    <div className={styles['product-details__text']}>
-                        {data.contraindication}
-                    </div>
-                </div>
-                <div className={styles['product-details__item']}>
-                    <h2 className={styles['product-details__title']}>Сроки выведения</h2>
-                    <div className={styles['product-details__text']}>
-                        {data.elimination}
-                    </div>
-                </div>
-            </div>
-        </div>
-    )
-}
-
+// ProductPage
 const ProductPage: NextPageWithLayout = () => {
 
     return (
@@ -132,9 +124,7 @@ const ProductPage: NextPageWithLayout = () => {
     )
 }
 
-
 export default ProductPage
-
 
 ProductPage.getLayout = function getLayout(page) {
     return (
