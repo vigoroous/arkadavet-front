@@ -9,15 +9,18 @@ import { ProductType } from './product/[pid]'
 
 
 // ProductElem
-const ProductElem: FC<ProductType> = ({ id, name, category, imageUrl }) =>
-    <Link href={`/product/${id}`} passHref>
-        <a className={styles['products__item']}>
-            <div className={styles['products__item-name']}>{name}</div>
-            <div className={styles['products__item-category']}>{category.name}</div>
-            <div className={styles['products__item-image']} style={{ backgroundImage: `url(${imageUrl})` }}></div>
-        </a>
-    </Link >
-
+const ProductElem: FC<ProductType> = ({ id, name, category, imageUrl }) => {
+    const CategoryElem = category.name.replace(/ /gi, '<br />')
+    return (
+        <Link href={`/product/${id}`} passHref>
+            <a className={styles['products__item']}>
+                <div className={styles['products__item-name']}>{name}</div>
+                <div className={styles['products__item-category']} dangerouslySetInnerHTML={{__html: CategoryElem}}></div>
+                <div className={styles['products__item-image']} style={{ backgroundImage: `url(${imageUrl})` }}></div>
+            </a>
+        </Link >
+    )
+}
 
 // Products
 type ProductsProps = {
