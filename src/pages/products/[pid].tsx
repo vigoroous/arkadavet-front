@@ -3,6 +3,7 @@ import { NextPageWithLayout } from 'pages/_app'
 import Layout from '@components/layout'
 import styles from '@styles/product.module.css'
 import { useRouter } from 'next/dist/client/router'
+import { GetStaticProps } from 'next'
 
 
 // Product
@@ -29,29 +30,8 @@ export type ProductType = {
     details: ProductDetailsType
 }
 
-const Product: FC = () => {
-    const router = useRouter()
-    const { pid } = router.query
-    const [data, setData] = useState<ProductType | null>(null)
+const Product: FC<ProductType> = (data) => {
 
-
-    useEffect(() => {
-        if (!pid) return
-        fetch(`http://127.0.0.1:8000/api/productfull/${pid}/`, {
-            method: 'GET',
-        })
-            .then(res => {
-                if (res.ok)
-                    return res.json()
-                else
-                    throw new Error("failed to get...")
-            })
-            .then((data: ProductType) => setData(data))
-            .catch(e => console.log(e))
-    }, [pid])
-
-
-    if (!data) return <div>Loading...</div>
     return (
         <Fragment>
             <div className={styles['breadcrumbs']}>
@@ -115,11 +95,20 @@ const Product: FC = () => {
 
 
 // ProductPage
-const ProductPage: NextPageWithLayout = () => {
+type ProductPageProps = {
+    data: ProductType,
+}
+
+const ProductPage: NextPageWithLayout<ProductPageProps> = ({ data }) => {
+    const router = useRouter()
+
+    if (router.isFallback) {
+        return <div>Loading...</div>
+    }
 
     return (
         <main className={"content " + styles['content_product']}>
-            <Product />
+            <Product {...data} />
         </main>
     )
 }
@@ -132,4 +121,32 @@ ProductPage.getLayout = function getLayout(page) {
             {page}
         </Layout>
     )
+}
+
+export async function getStaticPaths() {
+    return {
+        paths: [
+            { params: { pid: '1' } }
+        ],
+        fallback: true,
+    }
+}
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+    try {
+        if (!params) throw new Error()
+        const { pid } = params
+        const res = await fetch(`http://127.0.0.1:8000/api/productfull/${pid}/`)
+        const data: ProductType = await res.json();
+        return {
+            props: {
+                data,
+            },
+            revalidate: 10,
+        }
+    } catch (error) {
+        return {
+            notFound: true,
+        }
+    }
 }
