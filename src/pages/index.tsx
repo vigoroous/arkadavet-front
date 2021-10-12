@@ -4,18 +4,17 @@ import { NextPageWithLayout } from './_app'
 import Layout from '@components/layout'
 import styles from '@styles/home.module.css'
 import useFilters, { FilterActions } from 'hooks/useFilters'
-import { GetStaticProps } from 'next'
-import { ProductType } from './product/[pid]'
+import { ProductType } from './products/[pid]'
 
 
 // ProductElem
 const ProductElem: FC<ProductType> = ({ id, name, category, imageUrl }) => {
     const CategoryElem = category.name.replace(/ /gi, '<br />')
     return (
-        <Link href={`/product/${id}`} passHref>
+        <Link href={`/products/${id}`} passHref>
             <a className={styles['products__item']}>
                 <div className={styles['products__item-name']}>{name}</div>
-                <div className={styles['products__item-category']} dangerouslySetInnerHTML={{__html: CategoryElem}}></div>
+                <div className={styles['products__item-category']} dangerouslySetInnerHTML={{ __html: CategoryElem }}></div>
                 <div className={styles['products__item-image']} style={{ backgroundImage: `url(${imageUrl})` }}></div>
             </a>
         </Link >
@@ -24,11 +23,27 @@ const ProductElem: FC<ProductType> = ({ id, name, category, imageUrl }) => {
 
 // Products
 type ProductsProps = {
-    data: ProductType[],
-    filters: string[]
+    filters: string,
 }
 
-const Products: FC<ProductsProps> = ({ filters, data }) => {
+const Products: FC<ProductsProps> = ({ filters }) => {
+    const [data, setData] = useState<ProductType[] | null>(null)
+
+    useEffect(() => {
+        fetch(`http://127.0.0.1:8000/api/product/?category=${filters}`, {
+            method: 'GET',
+        })
+            .then(res => {
+                if (res.ok)
+                    return res.json()
+                else
+                    throw new Error("failed to get...")
+            })
+            .then((data: ProductType[]) => setData(data))
+            .catch(e => console.log(e))
+    }, [filters])
+
+    if (!data) return <div>Loading...</div>
     return (
         <div className={styles['products']}>
             {data.map(e =>
@@ -40,22 +55,28 @@ const Products: FC<ProductsProps> = ({ filters, data }) => {
 
 // Controls
 type ControlProps = {
-    dispatch: FilterActions
+    dispatch: FilterActions,
+    filters: string,
 }
 
-const Controls: FC<ControlProps> = ({ dispatch }) => {
+const Controls: FC<ControlProps> = ({ filters, dispatch }) => {
+    const clear = () => dispatch({ 'type': 'CLEAR_FILTERS' })
+    const setFilter = (str: string) => () => dispatch({ 'type': 'TOGGLE_FILTER', 'filter': str })
+
+    const ControlElem: FC<{ id: string }> = ({ id, children }) =>
+        <button className={`${styles['control__button']} ${filters === id && styles['control__button_active']}`} data-filter={id} onClick={setFilter(id)}>{children}</button>
 
     return (
         <div className={styles['control']}>
             <div className={styles['control__filter']}>
-                <button className={styles['control__button'] + " " + styles['control__button_active']}>Показать все</button>
-                <button className={styles['control__button']} data-filter="antibacterial">Антибактер.<br />препараты</button>
-                <button className={styles['control__button']} data-filter="anti-coccidal">Противококц.<br />препараты</button>
-                <button className={styles['control__button']} data-filter="vitamins">Кормовые<br />добавки</button>
-                <button className={styles['control__button']} data-filter="adsorbent">Адсорбент<br />микотоксинов</button>
-                <button className={styles['control__button']} data-filter="anti-inflammatory">Противовосп.<br />препараты</button>
-                <button className={styles['control__button']} data-filter="hormonal">Гормональные<br />препараты</button>
-                <button className={styles['control__button']} data-filter="complex">Противоинф.<br />препараты</button>
+                <button className={`${styles['control__button']} ${filters === '' && styles['control__button_active']}`} onClick={clear}>Показать все</button>
+                <ControlElem id='antibacterial'>Антибактер.<br />препараты</ControlElem>
+                <ControlElem id='anticoccidal'>Противококц.<br />препараты</ControlElem>
+                <ControlElem id='vitamins'>Кормовые<br />добавки</ControlElem>
+                <ControlElem id='adsorbent'>Адсорбент<br />микотоксинов</ControlElem>
+                <ControlElem id='antiinflammatory'>Противовосп.<br />препараты</ControlElem>
+                <ControlElem id='hormonal'>Гормональные<br />препараты</ControlElem>
+                <ControlElem id='complex'>Противоинф.<br />препараты</ControlElem>
             </div>
             <div className={styles['control__divider']}></div>
             <div className={styles['control__sorting']}>
@@ -69,7 +90,7 @@ const Controls: FC<ControlProps> = ({ dispatch }) => {
 
 
 // Home
-const Home: NextPageWithLayout<{ data: ProductType[] }> = ({ data }) => {
+const Home: NextPageWithLayout = () => {
     const [state, dispatch] = useFilters()
 
     return (
@@ -87,8 +108,8 @@ const Home: NextPageWithLayout<{ data: ProductType[] }> = ({ data }) => {
                 </div>
                 <div className={styles['lightbox__image']}></div>
             </div>
-            <Controls dispatch={dispatch} />
-            <Products filters={state.filters} data={data} />
+            <Controls dispatch={dispatch} filters={state.filters}/>
+            <Products filters={state.filters} />
         </main>
 
     )
@@ -98,26 +119,8 @@ export default Home
 
 Home.getLayout = function getLayout(page) {
     return (
-        <Layout>
+        <Layout selected='home'>
             {page}
         </Layout>
     )
-}
-
-export const getStaticProps: GetStaticProps = async () => {
-    try {
-        const res = await fetch("http://127.0.0.1:8000/api/product/")
-        const data: ProductType = await res.json();
-
-        return {
-            props: {
-                data,
-            },
-            revalidate: 10,
-        }
-    } catch (error) {
-        return {
-            notFound: true,
-        }
-    }
 }

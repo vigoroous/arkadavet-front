@@ -1,11 +1,11 @@
-import React, { FunctionComponent } from "react";
+import React, { FC } from "react";
 import Footer from "./footer";
-import Header from "./header";
+import Header, { HeaderProps } from "./header";
 
 
-const Layout: FunctionComponent = ({children}) =>
+const Layout: FC<HeaderProps> = ({children, selected}) =>
     <>
-        <Header/>
+        <Header selected={selected}/>
         {children}
         <Footer/>
     </>

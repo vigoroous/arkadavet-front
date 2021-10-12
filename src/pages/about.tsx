@@ -43,7 +43,7 @@ export default About
 
 About.getLayout = function getLayout(page) {
     return (
-        <Layout>
+        <Layout selected='about'>
             {page}
         </Layout>
     )

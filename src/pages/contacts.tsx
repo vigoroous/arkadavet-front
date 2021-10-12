@@ -41,7 +41,7 @@ export default Contacts
 
 Contacts.getLayout = function getLayout(page) {
     return (
-        <Layout>
+        <Layout selected='contacts'>
             {page}
         </Layout>
     )

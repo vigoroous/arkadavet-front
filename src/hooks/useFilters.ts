@@ -2,11 +2,11 @@ import { useReducer } from "react"
 
 
 type FilterState = {
-    filters: string[]
+    filters: string
 }
 
 const initialState: FilterState = {
-    filters: []
+    filters: ''
 }
 
 export type FilterAction =
@@ -17,14 +17,12 @@ type FilterReducerType = (state: FilterState, action: FilterAction) => FilterSta
 
 const filterReducer: FilterReducerType = (state, action) => {
     switch (action.type) {
-        case 'CLEAR_FILTERS': return { ...state, filters: [] }
+        case 'CLEAR_FILTERS': return { ...state, filters: '' }
         case 'TOGGLE_FILTER': {
             const { filter } = action
             return {
                 ...state,
-                filters: state.filters.includes(filter) ?
-                    state.filters.filter(e => e !== filter) :
-                    state.filters.concat(filter)
+                filters: state.filters === filter ? '' : filter
             }
         }
     }
