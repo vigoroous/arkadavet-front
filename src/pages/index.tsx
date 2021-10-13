@@ -5,7 +5,6 @@ import Layout from '@components/layout'
 import styles from '@styles/home.module.css'
 import useFilters, { FilterActions } from 'hooks/useFilters'
 import { ProductType } from './products/[pid]'
-import { useRouter } from 'next/dist/client/router'
 
 
 // ProductElem
@@ -30,17 +29,6 @@ type PageType = {
     results: ProductType[],
 }
 
-// type PaginatorType = {
-//     currentPage: number,
-// }
-type statePage = {
-    currentPage: number,
-}
-
-const initialState: statePage = {
-    currentPage: 1
-}
-
 type PaginatorProps = {
     count: number,
     currentPage: number,
@@ -49,14 +37,8 @@ type PaginatorProps = {
     limit: number,
 }
 
-// const PaginatorButton: FC<{ id: string, url: string }> = ({ id, url, children }) => {
-//     return (
-        
-//     )
-// }
-
 const Paginator: FC<PaginatorProps> = ({ count, currentPage, setPage, limit }) => {
-    const firstPage =  1
+    const firstPage = 1
     const lastPage = Math.ceil(count / limit)
 
     // if (!currentPage) return <div>Loading...</div>
@@ -67,26 +49,26 @@ const Paginator: FC<PaginatorProps> = ({ count, currentPage, setPage, limit }) =
             <button
                 className={`${styles['paginator__button']} ${currentPage === id && styles['paginator__button_active']}`}
                 page-number={id}
-                onClick={()=>setPage(id)}
+                onClick={() => setPage(id)}
             >
                 {id}
             </button>
         )
     }
 
-    const FirstPage = () => currentPage > firstPage ?  <PaginatorButton id={firstPage}/> : null
-    const LastPage = () => currentPage < lastPage ? <PaginatorButton id={lastPage}/> : null
-    const CurrentPage = () => <PaginatorButton id={currentPage}/>
-    const PrevPage = () => currentPage > firstPage + 1 ? <PaginatorButton id={currentPage-1}/> : null
-    const NextPage = () => currentPage < lastPage - 1 ? <PaginatorButton id={currentPage+1}/> : null
+    const FirstPage = () => currentPage > firstPage ? <PaginatorButton id={firstPage} /> : null
+    const LastPage = () => currentPage < lastPage ? <PaginatorButton id={lastPage} /> : null
+    const CurrentPage = () => <PaginatorButton id={currentPage} />
+    const PrevPage = () => currentPage > firstPage + 1 ? <PaginatorButton id={currentPage - 1} /> : null
+    const NextPage = () => currentPage < lastPage - 1 ? <PaginatorButton id={currentPage + 1} /> : null
 
     return (
         <div className={styles['paginator']}>
-                <FirstPage/>
-                <PrevPage/>
-                <CurrentPage/>
-                <NextPage/>
-                <LastPage/>
+            <FirstPage />
+            <PrevPage />
+            <CurrentPage />
+            <NextPage />
+            <LastPage />
         </div>
     )
 }
@@ -94,21 +76,20 @@ const Paginator: FC<PaginatorProps> = ({ count, currentPage, setPage, limit }) =
 // Products
 type ProductsProps = {
     filters: string,
+    sorts: string,
 }
 
-const Products: FC<ProductsProps> = ({ filters }) => {
+const Products: FC<ProductsProps> = ({ filters, sorts }) => {
     const [statePage, setPage] = useState(1)
-    const {query} = useRouter()
     const [data, setData] = useState<PageType | null>(null)
 
-    const limit = 1
+    const limit = 8
     const offset = statePage * limit - limit
 
-    console.log(query)
-
-    useEffect(()=>setPage(1), [filters])
+    // Move user to first page when filters applied
+    useEffect(() => setPage(1), [filters])
     useEffect(() => {
-        fetch(`http://127.0.0.1:8000/api/product/?limit=${limit}&offset=${offset}&category=${filters}`, {
+        fetch(`http://127.0.0.1:8000/api/product/?limit=${limit}&offset=${offset}&category=${filters}&ordering=${sorts}`, {
             method: 'GET',
         })
             .then(res => {
@@ -119,7 +100,7 @@ const Products: FC<ProductsProps> = ({ filters }) => {
             })
             .then((data: PageType) => setData(data))
             .catch(e => console.log(e))
-    }, [limit, offset, filters])
+    }, [limit, offset, filters, sorts])
 
     if (!data) return <div>Loading...</div>
     return (
@@ -138,32 +119,37 @@ const Products: FC<ProductsProps> = ({ filters }) => {
 type ControlProps = {
     dispatch: FilterActions,
     filters: string,
+    sorts: string,
 }
 
-const Controls: FC<ControlProps> = ({ filters, dispatch }) => {
+const Controls: FC<ControlProps> = ({ filters, sorts, dispatch }) => {
     const clear = () => dispatch({ 'type': 'CLEAR_FILTERS' })
     const setFilter = (str: string) => () => dispatch({ 'type': 'TOGGLE_FILTER', 'filter': str })
+    const setSort = (str: string) => () => dispatch({ 'type': 'TOGGLE_SORT', 'sort': str })
 
-    const ControlElem: FC<{ id: string }> = ({ id, children }) =>
+    const FilterButton: FC<{ id: string }> = ({ id, children }) =>
         <button className={`${styles['control__button']} ${filters === id && styles['control__button_active']}`} data-filter={id} onClick={setFilter(id)}>{children}</button>
+
+    const SortButton: FC<{ id: string }> = ({ id, children }) =>
+        <button className={`${styles['control__button']} ${sorts === id && styles['control__button_active']}`} data-sort-by={id} onClick={setSort(id)}>{children}</button>
 
     return (
         <div className={styles['control']}>
             <div className={styles['control__filter']}>
                 <button className={`${styles['control__button']} ${filters === '' && styles['control__button_active']}`} onClick={clear}>Показать все</button>
-                <ControlElem id='antibacterial'>Антибактер.<br />препараты</ControlElem>
-                <ControlElem id='anticoccidal'>Противококц.<br />препараты</ControlElem>
-                <ControlElem id='vitamins'>Кормовые<br />добавки</ControlElem>
-                <ControlElem id='adsorbent'>Адсорбент<br />микотоксинов</ControlElem>
-                <ControlElem id='antiinflammatory'>Противовосп.<br />препараты</ControlElem>
-                <ControlElem id='hormonal'>Гормональные<br />препараты</ControlElem>
-                <ControlElem id='complex'>Противоинф.<br />препараты</ControlElem>
+                <FilterButton id='antibacterial'>Антибактер.<br />препараты</FilterButton>
+                <FilterButton id='anticoccidal'>Противококц.<br />препараты</FilterButton>
+                <FilterButton id='vitamins'>Кормовые<br />добавки</FilterButton>
+                <FilterButton id='adsorbent'>Адсорбент<br />микотоксинов</FilterButton>
+                <FilterButton id='antiinflammatory'>Противовосп.<br />препараты</FilterButton>
+                <FilterButton id='hormonal'>Гормональные<br />препараты</FilterButton>
+                <FilterButton id='complex'>Противоинф.<br />препараты</FilterButton>
             </div>
             <div className={styles['control__divider']}></div>
             <div className={styles['control__sorting']}>
-                <button className={styles['control__button'] + " " + styles['control__button_active']} data-sort-by="rating">По популярности</button>
-                <button className={styles['control__button']} data-sort-by="name">По названию</button>
-                <button className={styles['control__button']} data-sort-by="category">По категории</button>
+                <SortButton id='-rating'>По популярности</SortButton>
+                <SortButton id='name'>По названию</SortButton>
+                <SortButton id='category'>По категории</SortButton>
             </div>
         </div>
     )
@@ -189,8 +175,8 @@ const Home: NextPageWithLayout = () => {
                 </div>
                 <div className={styles['lightbox__image']}></div>
             </div>
-            <Controls filters={stateFilter.filters} dispatch={setFilter} />
-            <Products filters={stateFilter.filters}/>
+            <Controls filters={stateFilter.filters} sorts={stateFilter.sorts} dispatch={setFilter} />
+            <Products filters={stateFilter.filters} sorts={stateFilter.sorts} />
         </main>
 
     )
