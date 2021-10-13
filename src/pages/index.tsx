@@ -87,7 +87,7 @@ const Products: FC<ProductsProps> = ({ filters, sorts }) => {
     const offset = statePage * limit - limit
 
     // Move user to first page when filters applied
-    useEffect(() => setPage(1), [filters])
+    useEffect(() => setPage(1), [filters, sorts])
     useEffect(() => {
         fetch(`http://127.0.0.1:8000/api/product/?limit=${limit}&offset=${offset}&category=${filters}&ordering=${sorts}`, {
             method: 'GET',
