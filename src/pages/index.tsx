@@ -109,7 +109,12 @@ const Products: FC<ProductsProps> = ({ filters, sorts }) => {
                 {data.results.map(e =>
                     <ProductElem key={e.id} {...e} />)}
             </div>
-            <Paginator count={data.count} currentPage={statePage} setPage={setPage} limit={limit}></Paginator>
+            <Paginator
+                count={data.count}
+                currentPage={statePage}
+                setPage={setPage}
+                limit={limit}
+            />
         </>
     )
 }

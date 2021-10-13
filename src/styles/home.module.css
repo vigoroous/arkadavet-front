@@ -181,6 +181,48 @@
     background-size: contain;
 }
 
+/********* Paginator *********/
+.paginator {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+.paginator__button {
+    width: 40px;
+    height: 40px;
+    padding: 0 10px;
+    margin: 0 10px;
+    overflow: hidden;
+    background-color: #e0e0e0;
+    border: none;
+    outline: none;
+    font-family: 'Roboto';
+    font-size: 18px;
+    font-weight: 700;
+    color: #668F96;
+    text-align: center;
+}
+
+.paginator__button:first-child {
+    margin-left: 0px;
+}
+
+.paginator__button:last-child {
+    margin-right: 0px;
+}
+
+.paginator__button:hover {
+    background-color: #80A6AD;
+    color: #FFF;
+    cursor: pointer;
+}
+
+.paginator__button_active {
+    background-color: #445F64;
+    color: #FFF;
+}
+
 /********* RESOLUTION *********/
 
 @media (max-width: 1200px) {
