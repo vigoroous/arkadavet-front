@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { NextPageWithLayout } from './_app'
 import Layout from '@components/layout'
 import styles from "@styles/contacts.module.css"
@@ -7,16 +7,16 @@ import { API_HOST } from './_app'
 
 const Contacts: NextPageWithLayout = (props) => {
     const form = useRef<HTMLFormElement>(null)
+    const [buttonState, setButtonState] = useState(false)
 
     const handleSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
         event.preventDefault()
         if (!form.current) return
         const formData = new FormData(form.current)
         form.current.reset()
-        const submitButton = form.current.lastElementChild
-        submitButton?.setAttribute('disabled', 'disabled')
+        setButtonState(true)
 
-        fetch(`http://${API_HOST}/products/form/`, {
+        fetch(`${API_HOST}/products/form/`, {
             method: 'POST',
             body: formData
         })
@@ -28,7 +28,7 @@ const Contacts: NextPageWithLayout = (props) => {
             })
             .then((data: number) => {
                 data === 1 ? alert('Сообщение отправлено.') : alert('Сообщение не было отправлено.')
-                submitButton?.removeAttribute('disabled')
+                setButtonState(false)
             })
             .catch(e => console.log(e))
     }
@@ -57,7 +57,7 @@ const Contacts: NextPageWithLayout = (props) => {
                     <input type="text" name="phone" className={styles.form__input} placeholder="Телефон" />
                     <textarea cols={40} rows={5} name="order" className={styles.form__textarea}
                         placeholder="Добавьте сообщение..."></textarea>
-                    <button type="submit" className={styles.form__button}>Отправить</button>
+                    <button type="submit" className={styles.form__button} disabled={buttonState}>Отправить</button>
                 </form>
             </div>
         </main>

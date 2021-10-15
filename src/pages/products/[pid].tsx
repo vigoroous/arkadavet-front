@@ -1,4 +1,4 @@
-import React, { FC, Fragment, useRef } from 'react'
+import React, { FC, Fragment, useRef, useState } from 'react'
 import { NextPageWithLayout } from 'pages/_app'
 import Layout from '@components/layout'
 import styles from '@styles/product.module.css'
@@ -33,14 +33,14 @@ export type ProductType = {
 
 const Product: FC<ProductType> = (data) => {
     const form = useRef<HTMLFormElement>(null)
+    const [buttonState, setButtonState] = useState(false)
 
     const handleSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
         event.preventDefault()
         if (!form.current) return
         const formData = new FormData(form.current)
         form.current.reset()
-        const submitButton = form.current.lastElementChild
-        submitButton?.setAttribute('disabled', 'disabled')
+        setButtonState(true)
 
         fetch(`http://${API_HOST}/products/form/`, {
             method: 'POST',
@@ -54,7 +54,7 @@ const Product: FC<ProductType> = (data) => {
             })
             .then((data: number) => {
                 data === 1 ? alert('Сообщение отправлено.') : alert('Сообщение не было отправлено.')
-                submitButton?.removeAttribute('disabled')
+                setButtonState(false)
             })
             .catch(e => console.log(e))
     }
@@ -78,7 +78,7 @@ const Product: FC<ProductType> = (data) => {
                     <input type="text" name="email" className={styles['form__input']} placeholder="Эл. почта" />
                     <input type="text" name="phone" className={styles['form__input']} placeholder="Телефон" />
                     <input type="hidden" name="order" value={data.name} />
-                    <button type="submit" className={styles['form__button']}>Заказать</button>
+                    <button type="submit" className={styles['form__button']} disabled={buttonState}>Заказать</button>
                 </form>
             </div>
             <div className={styles['product-details']}>
@@ -164,8 +164,9 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     try {
         if (!params) throw new Error()
         const { pid } = params
-        const res = await fetch(`http://${API_HOST}/products/full/${pid}/`)
-        const data: ProductType = await res.json();
+        const res = await fetch(`${API_HOST}/products/full/${pid}/`)
+        if (res.status === 404) throw new Error('Not found')
+        const data: ProductType = await res.json()
         return {
             props: {
                 data,

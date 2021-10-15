@@ -7,6 +7,7 @@ import useFilters, { FilterActions } from 'hooks/useFilters'
 import { ProductType } from './products/[pid]'
 import { API_HOST } from './_app'
 
+
 // ProductElem
 const ProductElem: FC<ProductType> = ({ id, name, category, imageUrl }) => {
     const CategoryElem = category.name.replace(/ /gi, '<br />')
@@ -89,7 +90,7 @@ const Products: FC<ProductsProps> = ({ filters, sorts }) => {
     // Move user to first page when filters applied
     useEffect(() => setPage(1), [filters, sorts])
     useEffect(() => {
-        fetch(`http://${API_HOST}/products/base/?limit=${limit}&offset=${offset}&category=${filters}&ordering=${sorts}`, {
+        fetch(`${API_HOST}/products/base/?limit=${limit}&offset=${offset}&category=${filters}&ordering=${sorts}`, {
             method: 'GET',
         })
             .then(res => {
