@@ -18,3 +18,5 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
   return getLayout(<Component {...pageProps} />)
 }
+
+export const API_HOST = 'localhost:8000'

@@ -88,6 +88,11 @@
     margin-top: 0;
 }
 
+.form__button:disabled {
+    background-color: #a5a5a5;
+    cursor: default;
+}
+
 .order__product-name {
     font-family: 'Raleway';
     font-weight: 600;

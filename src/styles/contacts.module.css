@@ -82,6 +82,11 @@
     margin-top: 2px;
 }
 
+.form__button:disabled {
+    background-color: #a5a5a5;
+    cursor: default;
+}
+
 /*********** Resolution ***********/
 
 @media (max-width: 980px) {

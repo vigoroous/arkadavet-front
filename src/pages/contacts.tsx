@@ -1,9 +1,38 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { NextPageWithLayout } from './_app'
 import Layout from '@components/layout'
 import styles from "@styles/contacts.module.css"
+import { API_HOST } from './_app'
+
 
 const Contacts: NextPageWithLayout = (props) => {
+    const form = useRef<HTMLFormElement>(null)
+
+    const handleSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
+        event.preventDefault()
+        if (!form.current) return
+        const formData = new FormData(form.current)
+        form.current.reset()
+        const submitButton = form.current.lastElementChild
+        submitButton?.setAttribute('disabled', 'disabled')
+
+        fetch(`http://${API_HOST}/products/form/`, {
+            method: 'POST',
+            body: formData
+        })
+            .then(res => {
+                if (res.ok)
+                    return res.json()
+                else
+                    throw new Error("failed to get...")
+            })
+            .then((data: number) => {
+                data === 1 ? alert('Сообщение отправлено.') : alert('Сообщение не было отправлено.')
+                submitButton?.removeAttribute('disabled')
+            })
+            .catch(e => console.log(e))
+    }
+
     return (
         <main className={"content " + styles['content_contacts']}>
             <h1 className={styles.title}>Контакты</h1>
@@ -22,7 +51,7 @@ const Contacts: NextPageWithLayout = (props) => {
                     <p className={styles.email}>arkada.vet@yandex.ru</p>
                     <p className={styles.text}>Мы работаем ежедневно и без выходных.</p>
                 </div>
-                <form className={styles['form']}>
+                <form className={styles['form']} ref={form} onSubmit={handleSubmit}>
                     <input type="text" name="name" className={styles.form__input} placeholder="Имя" />
                     <input type="text" name="email" className={styles.form__input} placeholder="Эл. почта" />
                     <input type="text" name="phone" className={styles.form__input} placeholder="Телефон" />

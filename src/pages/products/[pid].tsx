@@ -1,9 +1,10 @@
-import React, { FC, Fragment, useEffect, useState } from 'react'
+import React, { FC, Fragment, useRef } from 'react'
 import { NextPageWithLayout } from 'pages/_app'
 import Layout from '@components/layout'
 import styles from '@styles/product.module.css'
 import { useRouter } from 'next/dist/client/router'
 import { GetStaticProps } from 'next'
+import { API_HOST } from '../_app'
 
 
 // Product
@@ -31,6 +32,32 @@ export type ProductType = {
 }
 
 const Product: FC<ProductType> = (data) => {
+    const form = useRef<HTMLFormElement>(null)
+
+    const handleSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
+        event.preventDefault()
+        if (!form.current) return
+        const formData = new FormData(form.current)
+        form.current.reset()
+        const submitButton = form.current.lastElementChild
+        submitButton?.setAttribute('disabled', 'disabled')
+
+        fetch(`http://${API_HOST}/products/form/`, {
+            method: 'POST',
+            body: formData
+        })
+            .then(res => {
+                if (res.ok)
+                    return res.json()
+                else
+                    throw new Error("failed to get...")
+            })
+            .then((data: number) => {
+                data === 1 ? alert('Сообщение отправлено.') : alert('Сообщение не было отправлено.')
+                submitButton?.removeAttribute('disabled')
+            })
+            .catch(e => console.log(e))
+    }
 
     return (
         <Fragment>
@@ -45,11 +72,12 @@ const Product: FC<ProductType> = (data) => {
             </div>
             <div className={styles['order']}>
                 <div className={styles['order__product-image']} style={{ backgroundImage: `url(${data.imageUrl})` }}></div>
-                <form className={styles['form']}>
+                <form className={styles['form']} ref={form} onSubmit={handleSubmit}>
                     <h1 className={styles['order__product-name']}>{data.name}</h1>
                     <input type="text" name="name" className={styles['form__input']} placeholder="Имя" />
                     <input type="text" name="email" className={styles['form__input']} placeholder="Эл. почта" />
                     <input type="text" name="phone" className={styles['form__input']} placeholder="Телефон" />
+                    <input type="hidden" name="order" value={data.name} />
                     <button type="submit" className={styles['form__button']}>Заказать</button>
                 </form>
             </div>
@@ -136,7 +164,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     try {
         if (!params) throw new Error()
         const { pid } = params
-        const res = await fetch(`http://127.0.0.1:8000/api/productfull/${pid}/`)
+        const res = await fetch(`http://${API_HOST}/products/full/${pid}/`)
         const data: ProductType = await res.json();
         return {
             props: {
