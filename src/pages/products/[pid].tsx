@@ -42,7 +42,7 @@ const Product: FC<ProductType> = (data) => {
         form.current.reset()
         setButtonState(true)
 
-        fetch(`http://${API_HOST}/products/form/`, {
+        fetch(`${API_HOST}/products/form/`, {
             method: 'POST',
             body: formData
         })
