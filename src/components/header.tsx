@@ -1,56 +1,96 @@
-import React, { FC, useEffect, useRef, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import styles from '@styles/header.module.css'
+import styles_mobile from '@styles/header_mobile.module.css'
 
 
 export type HeaderProps = {
     selected?: 'home' | 'about' | 'contacts'
 }
 
-const Header: FC<HeaderProps> = ({ selected }) => {
-    const [header, setHeader] = useState(false)
-    const timer = useRef<number | null>(null)
-    const [hide, setHide] = useState(true)
+type MobileDrawerProps = {
+    open: boolean,
+    delay?: number,
+} & HeaderProps
 
-    const openDrawer = () => setHide(false)
-    const hideDrawer = () => {
-        if (timer.current === null) return
-        timer.current = window.setTimeout(() => setHide(true), 500)
-    }
-    const toggleDrawer = () => {
-        setHeader(!header)
-        if (hide)
-            openDrawer()
-        else
-            hideDrawer()
-    }
+const MobileDrawer: FC<MobileDrawerProps> = ({open, selected, delay = 300}) => {
+    const timer = useRef<number | undefined>(undefined)
+    const [actuallyOpen, setActuallyOpen] = useState(false)
+
+    useEffect(() => {
+        if (timer.current) window.clearTimeout(timer.current)
+        if (open) {
+            setActuallyOpen(true)
+        } else {
+            timer.current = window.setTimeout(() => setActuallyOpen(false), delay)
+            return () => window.clearTimeout(timer.current)
+        }
+    }, [open])
+
+    if (!actuallyOpen) return null 
+    return(
+        <div className={`${styles_mobile['header__nav-wrap']} ${open ? styles_mobile['header__nav-wrap_opened'] : styles_mobile['header__nav-wrap_closed']}`}>
+            <nav className={`${styles_mobile['header__nav']} ${open ? styles_mobile['header__nav_opened'] : styles_mobile['header__nav_closed']}`}>
+                <Link href="/"><a className={`${styles_mobile['header__nav-link']} ${selected === 'home' && styles_mobile['header__nav-link_active']}`}>Каталог</a></Link>
+                <Link href="/about"><a className={`${styles_mobile['header__nav-link']} ${selected === 'about' && styles_mobile['header__nav-link_active']}`}>О&nbsp;нас</a></Link>
+                <Link href="/contacts"><a className={`${styles_mobile['header__nav-link']} ${selected === 'contacts' && styles_mobile['header__nav-link_active']}`}>Контакты</a></Link>
+            </nav>
+        </div>
+    )
+}
+
+const MobileHeader: FC<HeaderProps> = ({ selected }) => {
+    const [open, setOpen] = useState(false) // стейт под существовние HeaderBase
+
+    const toggleDrawer = () => setOpen(!open)
 
     return (
-        <header className={styles.header}>
-            <div className={styles.header__wrap_mobile}>
-                <div className={`${styles['header__burger-wrap']}`}>
-                    <div className={`${styles['header__burger']} ${header === true && styles['header__burger_opened']}`} onClick={toggleDrawer}>
+        <header className={`${styles_mobile['header']}`}>
+            <div className={`${styles_mobile['header__wrap']}`}>
+                <div className={`${styles_mobile['header__burger-wrap']}`}>
+                    <div className={`${styles_mobile['header__burger']} ${open && styles_mobile['header__burger_opened']}`}
+                        onClick={toggleDrawer}>
                         <span></span>
                         <span></span>
                         <span></span>
                         <span></span>
                     </div>
                 </div>
-                <div className={`${styles['header__logo_mobile']}`}>
-                    <a className={`${styles['header__logo-link_mobile']}`} href="/">Аркада-Вет</a>
+                <div className={`${styles_mobile['header__logo']}`}>
+                    <a className={`${styles_mobile['header__logo-link']}`} href="/">Аркада-Вет</a>
                 </div>
             </div>
-            <div className={`${styles['header__wrap']} ${header === true && styles['header__wrap_opened']} ${hide === true && styles['header__wrap_closed']}`}>
-                <div className={styles.header__logo}>
-                    <Link href="/"><a className={styles['header__logo-link']}>Аркада-Вет</a></Link>
+            <MobileDrawer open={open} selected={selected}/>
+        </header>
+    )
+}
+
+
+const DesktopHeader: FC<HeaderProps> = ({ selected }) => {
+    return (
+        <header className={`${styles['header']}`}>
+            <div className={`${styles['header__wrap']}`}>
+                <div className={`${styles['header__logo']}`}>
+                    <Link href="/"><a className={`${styles['header__logo-link']}`}>Аркада-Вет</a></Link>
                 </div>
-                <nav className={`${styles['header__nav']} ${header === true && styles['header__nav_opened']}`}>
+                <nav className={`${styles['header__nav']}`}>
                     <Link href="/"><a className={`${styles['header__nav-link']} ${selected === 'home' && styles['header__nav-link_active']}`}>Каталог</a></Link>
                     <Link href="/about"><a className={`${styles['header__nav-link']} ${selected === 'about' && styles['header__nav-link_active']}`}>О&nbsp;нас</a></Link>
                     <Link href="/contacts"><a className={`${styles['header__nav-link']} ${selected === 'contacts' && styles['header__nav-link_active']}`}>Контакты</a></Link>
                 </nav>
             </div>
         </header>
+    )
+}
+
+
+const Header: FC<HeaderProps> = ({ selected }) => {
+
+    return (
+        <>
+            <MobileHeader selected={selected} />
+            <DesktopHeader selected={selected} />
+        </>
     )
 }
 
