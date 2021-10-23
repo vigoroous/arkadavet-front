@@ -40,9 +40,11 @@ const MobileDrawer: FC<MobileDrawerProps> = ({open, selected, delay = 300}) => {
 }
 
 const MobileHeader: FC<HeaderProps> = ({ selected }) => {
-    const [open, setOpen] = useState(false) // стейт под существовние HeaderBase
+    const [open, setOpen] = useState(false)
 
     const toggleDrawer = () => setOpen(!open)
+
+    useEffect(()=> setOpen(false), [selected])
 
     return (
         <header className={`${styles_mobile['header']}`}>
