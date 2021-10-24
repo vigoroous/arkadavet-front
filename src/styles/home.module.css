@@ -391,3 +391,9 @@
         height: calc(100vw/2 - 82px);
     }
 }
+
+@media (max-width: 370px) {
+    .products__item-name {
+        font-size: 15px;
+    }
+}
