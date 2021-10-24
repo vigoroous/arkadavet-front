@@ -186,6 +186,7 @@
 }
 
 /********* Paginator *********/
+
 .paginator {
     display: flex;
     justify-content: center;
@@ -257,21 +258,31 @@
 
 @media (max-width: 980px) {
     .lightbox {
-        max-width: 640px;
+        /* max-width: 640px; */
+        max-width: none;
+    }
+    .lightbox__article {
+        padding: 40px 30px;
     }
     .lightbox__title {
         font-size: 32px;
+        margin: 0px;
     }
     .lightbox__text {
         font-size: initial;
         margin-top: 60px;
+        margin-left: 0px;
         width: initial;
     }
     .lightbox__line {
-        width: 290px;
+        /* width: 290px; */
+        width: 264px;
+        margin-left: 0;
+        margin-top: 0;
     }
     .lightbox__image {
-        max-width: 300px;
+        /* max-width: 300px; */
+        max-width: none;
         height: 270px;
     }
     .control {
@@ -309,7 +320,8 @@
         padding: 1px;
     }
     .products__item-image {
-        height: 115px;
+        /* height: 115px; */
+        height: calc((100vw/3 - 140px));
     }
 }
 
@@ -326,15 +338,18 @@
     }
     .lightbox__line {
         width: 264px;
-        margin-bottom: 40px;
+        /* margin-bottom: 40px; */
+        margin-bottom: 10px;
     }
     .lightbox__image {
         max-width: unset;
         height: 200px;
     }
     .control {
-        max-width: 320px;
+        max-width: none;
         margin: 30px auto 0px auto;
+        padding-left: 20px;
+        padding-right: 20px;
     }
     .control__filter {
         grid-template-columns: 1fr 1fr;
@@ -356,8 +371,10 @@
     .products {
         grid-template-columns: 1fr 1fr;
         gap: 10px;
-        max-width: 320px;
-        margin: 30px auto 0px auto;
+        max-width: none;
+        padding-left: 20px;
+        padding-right: 20px;
+        /* margin: 30px auto 0px auto; */
     }
     .products__item-name {
         font-size: 18px;
@@ -370,6 +387,7 @@
     }
     .products__item-image {
         margin: 2px;
-        height: 108px;
+        /* height: 108px; */
+        height: calc(100vw/2 - 82px);
     }
 }
